@@ -1,0 +1,20 @@
+version: '2'
+services:
+  pri-dc:
+    image: busybox:latest
+    container_name: sql-dev-data
+    volumes:
+     - mssql-volume:/var/opt/mssql
+  db:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    ports:
+     - "1401:1433"
+    volumes_from:
+     - pri-dc:rw
+    container_name: sqldb
+    hostname: sqldb
+    environment:
+     - 'ACCEPT_EULA=Y'
+     - 'MSSQL_SA_PASSWORD=Ozzyscottypassword1'
+volumes:
+  mssql-volume:
