@@ -1,12 +1,12 @@
 ﻿CREATE PROCEDURE [VACANCY].[Event_GET_EventsSummaryForVacancy]
 	@VacancyReference BIGINT
 AS
+	SET NOCOUNT ON;
 
 	SELECT	EventType
 	INTO	#VacancyEvents
 	FROM	[VACANCY].[Event]
 	WHERE	VacancyReference = @VacancyReference
-
 
 	SELECT	@VacancyReference AS VacancyReference
 	,		(SELECT COUNT(1) FROM #VacancyEvents WHERE EventType = 'ApprenticeshipSearchImpressionEvent') AS NoOfApprenticeshipSearches
