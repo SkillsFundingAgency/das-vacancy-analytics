@@ -41,7 +41,6 @@ namespace Esfa.VacancyAnalytics.Functions
             var config = new ConfigurationBuilder()
                 .SetBasePath(context.FunctionAppDirectory)
                 .AddJsonFile(LocalSettingsFileName, optional: true, reloadOnChange: true)
-                .AddUserSecrets("")
                 .AddEnvironmentVariables()
                 .Build();
 //var last = partitionContext.RuntimeInformation.LastEnqueuedOffset;partitionContext.
