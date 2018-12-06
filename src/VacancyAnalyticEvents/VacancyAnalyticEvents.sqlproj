@@ -66,6 +66,10 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="VACANCY\Tables\Event.sql" />
+	<Build Include="VACANCY\Stored Procedures\Event_GET_EventsSummaryForVacancy.sql" />
+	<Build Include="VACANCY\Stored Procedures\Event_GET_RecentlyAffectedVacancies.sql" />
+	<Build Include="VACANCY\Stored Procedures\Event_INSERT_BatchEvents.sql" />
+	<Build Include="VACANCY\User-Defined Table Types\VacancyEventsTableType.sql" />	
     <Build Include="Security\VACANCY.sql" />
   </ItemGroup>
 </Project>
