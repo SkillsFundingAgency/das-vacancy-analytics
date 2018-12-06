@@ -2,6 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "functionAppName": {
+            "type": "string"
+        },
         "sharedResourceGroupName": {
             "type": "string"
         },
@@ -32,6 +35,26 @@
         },
         "eventHubPartitionCount": {
             "type": "int"
+        },
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "aseHostingEnvironmentName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aseResourceGroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "databaseConnectionString": {
+            "type": "string"
+        },
+        "recruitQueueConnectionString": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -92,6 +115,129 @@
                     },
                     "partitionCount": {
                         "value": "[parameters('eventHubPartitionCount')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "AppServicePlan",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServicePlanName": {
+                        "value": "[parameters('appServicePlanName')]"
+                    },
+                    "aseHostingEnvironmentName": {
+                        "value": "[parameters('aseHostingEnvironmentName')]"
+                    },
+                    "aseResourceGroup": {
+                        "value": "[parameters('aseResourceGroup')]"
+                    },
+                    "aspSize": {
+                        "value": "1"
+                    },
+                    "aspInstances": {
+                        "value": 1
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "StorageAccount",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "FunctionAppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('functionAppName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('functionAppName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "FunctionApp",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[parameters('functionAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[parameters('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[resourceGroup().name]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": [
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "VacancyEventHub",
+                                "value": "[reference('EventHub').outputs.HubEndpointReadOnly.value]"
+                            }
+                        ]
+                    },
+                    "functionAppConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "VacancyAnalyticEventsSqlDbConnectionString",
+                                "connectionString": "[parameters('databaseConnectionString')]",
+                                "type": "Custom"
+                            },
+                            {
+                                "name": "QueueStorage",
+                                "connectionString": "[parameters('recruitQueueConnectionString')]",
+                                "type": "Custom"
+                            }
+                        ]
                     }
                 }
             }
