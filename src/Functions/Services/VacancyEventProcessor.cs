@@ -12,31 +12,26 @@ using Microsoft.Azure.EventHubs.Processor;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Esfa.VacancyAnalytics.Functions
+namespace Esfa.VacancyAnalytics.Functions.Services
 {
     internal class VacancyEventProcessor : IEventProcessor
 	{
 		private readonly ILogger _log;
 		private readonly VacancyEventStoreWriter _writer;
-		private readonly QueueStorageWriter _qsWriter;
 		private Stopwatch _checkpointStopwatch;
+		private const string TimeTakenDisplayFormat = @"hh\:mm\:ss";
 
-		public VacancyEventProcessor(VacancyEventStoreWriter eventStoreWriter, QueueStorageWriter qsWriter, ILogger log)
+		public VacancyEventProcessor(VacancyEventStoreWriter eventStoreWriter, ILogger log)
 		{
 			_log = log;
 			_writer = eventStoreWriter;
-			_qsWriter = qsWriter;
 		}
 
 		public async Task CloseAsync(PartitionContext context, CloseReason reason)
 		{
-			_log.LogInformation($"{nameof(VacancyEventProcessor)} shutting down. Partition '{context.PartitionId}', Reason: '{reason}'.");
-
-			//if (reason == CloseReason.Shutdown)
-			//{
-				//await context.CheckpointAsync();
-			//}
-
+			_checkpointStopwatch.Stop();
+			_log.LogInformation($@"{nameof(VacancyEventProcessor)} shutting down. Partition '{context.PartitionId}', Reason: '{reason}'. 
+			Alive for {_checkpointStopwatch.Elapsed.ToString(TimeTakenDisplayFormat)}.");
 			await Task.CompletedTask;
 		}
 
@@ -86,20 +81,6 @@ namespace Esfa.VacancyAnalytics.Functions
 				_log.LogError(ex, "An error has occured with uploading events to the event store.");
 				throw;
 			}
-
-			var distinctVacancyReferences = GetDistinctVacancyReferencesFromTable(eventDataTable);
-
-			try
-			{
-				foreach (var item in distinctVacancyReferences)
-				{
-					await _qsWriter.QueueVacancyAsync(item);
-				}
-			}
-			catch (Exception ex)
-			{
-				_log.LogError(ex, $"An error occurred queuing a vacancy on to the storage queue.");
-			}
 		}
 
 		private VacancyEvent GetVacancyEvent(EventData evt)
@@ -120,20 +101,8 @@ namespace Esfa.VacancyAnalytics.Functions
 					return JsonConvert.DeserializeObject<ApprenticeshipApplicationCreatedEvent>(body);
 				case nameof(ApprenticeshipApplicationSubmittedEvent):
 					return JsonConvert.DeserializeObject<ApprenticeshipApplicationSubmittedEvent>(body);
-			}
-
-			return null;
-		}
-
-		private IEnumerable<long> GetDistinctVacancyReferencesFromTable(DataTable dt)
-		{
-			var columnIndex = 0;
-			var filterDistinct = true;
-			var distinctVacancyReferenceTable = dt.DefaultView.ToTable(filterDistinct, new[] { nameof(VacancyEvent.VacancyReference) });
-
-			foreach (DataRow row in distinctVacancyReferenceTable.Rows)
-			{
-				yield return long.Parse(row[columnIndex].ToString());
+				default:
+					return null;
 			}
 		}
 	}

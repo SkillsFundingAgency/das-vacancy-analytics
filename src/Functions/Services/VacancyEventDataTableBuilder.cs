@@ -12,7 +12,7 @@ namespace Esfa.VacancyAnalytics.Functions.Services
 
             eventData.Columns.Add(nameof(VacancyEvent.Id), typeof(Guid));
             eventData.Columns.Add(nameof(VacancyEvent.PublisherId));
-            eventData.Columns.Add(nameof(VacancyEvent.EventTime));
+            eventData.Columns.Add(nameof(VacancyEvent.EventTime), typeof(DateTime));
             eventData.Columns.Add(nameof(VacancyEvent.VacancyReference));
             eventData.Columns.Add(nameof(VacancyEvent.EventType));
 
