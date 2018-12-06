@@ -3,7 +3,7 @@ using Microsoft.Azure.EventHubs.Processor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Esfa.VacancyAnalytics.Functions
+namespace Esfa.VacancyAnalytics.Functions.Services
 {
 	internal class EventProcessorFactory : IEventProcessorFactory
 	{
@@ -20,10 +20,9 @@ namespace Esfa.VacancyAnalytics.Functions
 
 		public IEventProcessor CreateEventProcessor(PartitionContext context)
 		{
-			return new VacancyEventProcessor(
-				new VacancyEventStoreWriter(_config.GetConnectionString(VacancyEventStoreConnStringKey), _log),
-				new QueueStorageWriter(_config.GetConnectionString(QueueStorageConnStringKey)),
-				_log);
+			var eventStoreWriter = new VacancyEventStoreWriter(_config.GetConnectionString(VacancyEventStoreConnStringKey), _log);
+			var vep = new VacancyEventProcessor(eventStoreWriter,_log);
+			return vep;
 		}
 	}
 }
