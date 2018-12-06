@@ -222,6 +222,10 @@
                             {
                                 "name": "VacancyEventHub",
                                 "value": "[reference('EventHub').outputs.HubEndpointReadOnly.value]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
                             }
                         ]
                     },
