@@ -54,7 +54,7 @@ namespace Esfa.VacancyAnalytics.Functions.Services
 
 			var eventDataTable = VacancyEventDataTableBuilder.Build();
 
-			foreach (var evt in eventDataSet)
+			foreach (var evt in eventDataSet.Distinct())
 			{
 				try
 				{
