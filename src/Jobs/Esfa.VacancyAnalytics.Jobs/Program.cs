@@ -9,7 +9,7 @@ using NLog.Extensions.Logging;
 
 namespace Esfa.VacancyAnalytics.Jobs
 {
-	public class Job
+	public class Program
 	{
 		private const string VacancyEventHubConnStringKey = "VacancyEventHub";
 		private const string VacancyEventStoreConnStringKey = "VacancyAnalyticEventsSqlDbConnectionString";
@@ -17,12 +17,12 @@ namespace Esfa.VacancyAnalytics.Jobs
 		private const string HostNamePrefix = "vep";
 		private const string LocalSettingsFileName = "local.settings.json";
 		private const string QueueStorageConnStringKey = "QueueStorage";
-		private static ILogger<Job> _logger;
+		private static ILogger<Program> _logger;
 
 		private static readonly string EnvironmentName;
 		private static readonly bool IsDevelopment;
 
-		static Job()
+		static Program()
 		{
 			EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 			IsDevelopment = EnvironmentName?.Equals("Development", StringComparison.CurrentCultureIgnoreCase) ?? false;
@@ -35,7 +35,7 @@ namespace Esfa.VacancyAnalytics.Jobs
 			var config = configBuilder.Build();
 			LoggerFactory loggerFactory = SetupLoggerFactory();
 
-			_logger = loggerFactory.CreateLogger<Job>();
+			_logger = loggerFactory.CreateLogger<Program>();
 
 			var vacancyEventStoreConnString = config.GetConnectionString(VacancyEventStoreConnStringKey);
 			var vacancyEventHubConnString = config.GetConnectionString(VacancyEventHubConnStringKey);
@@ -100,7 +100,7 @@ namespace Esfa.VacancyAnalytics.Jobs
 
 			if (IsDevelopment)
 			{
-				configBuilder.AddUserSecrets<Job>();
+				configBuilder.AddUserSecrets<Program>();
 			}
 
 			return configBuilder;
