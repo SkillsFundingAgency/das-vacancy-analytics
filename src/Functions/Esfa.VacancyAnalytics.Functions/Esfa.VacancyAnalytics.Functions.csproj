@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AzureFunctionsVersion>2.0</AzureFunctionsVersion>
+	<RootNamespace>Esfa.VacancyAnalytics.Functions</RootNamespace>
+	<AssemblyName>Esfa.VacancyAnalytics.Functions</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="3.0.0" />
