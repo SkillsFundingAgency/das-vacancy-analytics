@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [VACANCY].[Event]
 (
-	[Id]				UNIQUEIDENTIFIER DEFAULT (newsequentialid()) NOT NULL,
-	[PublisherId]		VARCHAR(100)	NOT NULL,
-	[EventTime]			DATETIME		NOT NULL,
-	[VacancyReference]	BIGINT			NOT NULL,
-	[EventType]			VARCHAR(100)	NOT NULL,
+	[Id]				UNIQUEIDENTIFIER	NOT NULL,
+	[PublisherId]		VARCHAR(100)		NOT NULL,
+	[EventTime]			DATETIME			NOT NULL,
+	[VacancyReference]	BIGINT				NOT NULL,
+	[EventType]			VARCHAR(100)		NOT NULL,
 	PRIMARY KEY CLUSTERED ([Id] ASC)
 );
