@@ -50,7 +50,7 @@ namespace Esfa.VacancyAnalytics.Jobs
 					PartitionReceiver.DefaultConsumerGroupName,
 					vacancyEventHubConnString,
 					queueStorageConnString,
-					$"{HostNamePrefix}-{Guid.NewGuid()}");
+					$"{HostNamePrefix}");
 
 			var opts = new EventProcessorOptions
 			{
