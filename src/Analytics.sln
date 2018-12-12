@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions", "Functions\Functions.csproj", "{19505693-B13E-4B5D-8A6D-0899C897EA3D}"
+Project("{3E8C4779-F326-4E9D-8CA5-DCC69D3BF20D}") = "Functions", "Functions", "{91A7C4A7-2CAD-48C1-B9AC-6CEE729CB841}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esfa.VacancyAnalytics.Functions", "Functions\Esfa.VacancyAnalytics.Functions\Esfa.VacancyAnalytics.Functions.csproj", "{19505693-B13E-4B5D-8A6D-0899C897EA3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{E5B5D1E9-5197-4F67-B8EE-42B3957BA39D}"
 EndProject
