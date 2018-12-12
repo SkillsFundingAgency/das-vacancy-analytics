@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AzureFunctionsVersion>2.0</AzureFunctionsVersion>
+    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
 	<RootNamespace>Esfa.VacancyAnalytics.Functions</RootNamespace>
 	<AssemblyName>Esfa.VacancyAnalytics.Functions</AssemblyName>
   </PropertyGroup>
