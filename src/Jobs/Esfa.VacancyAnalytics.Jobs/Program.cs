@@ -16,7 +16,7 @@ namespace Esfa.VacancyAnalytics.Jobs
 		private const string EventHubName = "vacancy";
 		private const string HostNamePrefix = "vep";
 		private const string QueueStorageConnStringKey = "AzureWebJobsStorage";
-		private static ILogger<Program> _logger;
+		private static ILogger _logger;
 
 		private static readonly string EnvironmentName;
 		private static readonly bool IsDevelopment;
@@ -34,7 +34,7 @@ namespace Esfa.VacancyAnalytics.Jobs
 			var config = configBuilder.Build();
 			LoggerFactory loggerFactory = SetupLoggerFactory();
 
-			_logger = loggerFactory.CreateLogger<Program>();
+			_logger = loggerFactory.CreateLogger("VacancyAnalyticsWebJob");
 
 			var vacancyEventStoreConnString = config.GetConnectionString(VacancyEventStoreConnStringKey);
 			var vacancyEventHubConnString = config.GetConnectionString(VacancyEventHubConnStringKey);
