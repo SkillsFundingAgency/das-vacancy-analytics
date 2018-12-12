@@ -72,4 +72,7 @@
 	<Build Include="VACANCY\User-Defined Table Types\VacancyEventsTableType.sql" />	
     <Build Include="Security\VACANCY.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="VacancyAnalyticsEvents-docker-publish.xml" />
+  </ItemGroup>
 </Project>
