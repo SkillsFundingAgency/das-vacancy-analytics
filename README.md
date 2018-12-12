@@ -43,7 +43,7 @@ The default development environment uses docker containers to host it's dependen
 * SqlDb (hosted in a Linux :penguin: container if an existing installed SQL Server/LocalDB is not being used
 * [Azurite](https://github.com/Azure/Azurite) (Cross platform Azure Storage Emulator) if an existing installed Azure Storage Emulator is not being used to emulate external storage queue.
 
-To start the containers run the following from the _**/setup/containers/**_ directory:
+To start the containers copy the `docker-compose.yml` and `.docker` file from [das-recruit](https://github.com/SkillsFundingAgency/das-recruit/tree/master/setup/containers) to a directory of your choice and then run the following from the directory:
 
 >`docker-compose up -d`
 
