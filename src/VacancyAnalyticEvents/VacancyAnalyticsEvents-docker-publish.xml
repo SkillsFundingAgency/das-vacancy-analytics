@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+ <PropertyGroup>
+   <IncludeCompositeObjects>True</IncludeCompositeObjects>
+   <TargetDatabaseName>das-vacancy-analytic-events</TargetDatabaseName>
+   <DeployScriptFileName>VacancyAnalyticEvents.sql</DeployScriptFileName>
+   <TargetConnectionString>Data Source=127.0.0.1,1401;Persist Security Info=True;User ID=sa;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True</TargetConnectionString>
+   <ProfileVersionNumber>1</ProfileVersionNumber>
+ </PropertyGroup>
+</Project>
