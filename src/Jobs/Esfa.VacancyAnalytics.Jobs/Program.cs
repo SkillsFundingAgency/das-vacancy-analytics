@@ -15,7 +15,6 @@ namespace Esfa.VacancyAnalytics.Jobs
 		private const string VacancyEventStoreConnStringKey = "VacancyAnalyticEventsSqlDbConnectionString";
 		private const string EventHubName = "vacancy";
 		private const string HostNamePrefix = "vep";
-		private const string LocalSettingsFileName = "local.settings.json";
 		private const string QueueStorageConnStringKey = "AzureWebJobsStorage";
 		private static ILogger<Program> _logger;
 
