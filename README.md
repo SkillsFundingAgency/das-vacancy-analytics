@@ -35,13 +35,14 @@ In order to run this solution locally you will need the following:
 
 ### Environment setup (after cloning repository locally) <a name="envsetup"></a>
 
-> Ignore the following `Using docker hosted containers` section if not using an installed SQL Server instance and/or Azure storage emulator.
+> Ignore the following `Using docker hosted containers` section if not using an installed SQL Server instance and/or Azure storage emulator and ELK logging.
 
 #### Using docker hosted containers <a href="usingDocker"></a>
 The default development environment uses docker containers to host it's dependencies (outside of Azure EventHub).
 
 * SqlDb (hosted in a Linux :penguin: container if an existing installed SQL Server/LocalDB is not being used
 * [Azurite](https://github.com/Azure/Azurite) (Cross platform Azure Storage Emulator) if an existing installed Azure Storage Emulator is not being used to emulate external storage queue.
+* Redis and ELK containers - These are created purely for logging from the app into a logstash pipeline for viewing/monitoring in Kibana. (Not essential)
 
 To start the containers copy the `docker-compose.yml` and `.docker` file from [das-recruit](https://github.com/SkillsFundingAgency/das-recruit/tree/master/setup/containers) to a directory of your choice and then run the following from the directory:
 
@@ -162,6 +163,8 @@ dotnet run
 
 ### Function and webjob logs <a href="logs"></a>
 There is minimal logging for the functions and webjob because of how busy the proccesses will get and to avoid noisy logs. For running locally logging will be written to the console. In addition, telemetry will be sent to App Insights if configured correctly which can highlight issues and help with monitoring performance.
+
+If using the docker containers described near the top of this document, then logging for the webjob will also write to a containerised ELK stack which can be viewed in Kibana hosted at https//localhost:5601
 
 &nbsp;
 
