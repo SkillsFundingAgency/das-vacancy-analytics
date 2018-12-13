@@ -44,12 +44,14 @@ namespace Esfa.VacancyAnalytics.Jobs
 
             var factory = new EventProcessorFactory(loggerFactory.CreateLogger<VacancyEventProcessor>(), eventStoreWriter);
 
+            var epHostName = IsDevelopment ? HostNamePrefix : GetUniqueEventHostProcessorName();
+
             var eventProcessorHost = new EventProcessorHost(
                 EventHubName,
                 PartitionReceiver.DefaultConsumerGroupName,
                 vacancyEventHubConnString,
                 queueStorageConnString,
-                $"{HostNamePrefix}");
+                epHostName);
 
             var opts = new EventProcessorOptions
             {
@@ -72,6 +74,12 @@ namespace Esfa.VacancyAnalytics.Jobs
             await eventProcessorHost.UnregisterEventProcessorAsync();
         }
 
+        private static string GetUniqueEventHostProcessorName()
+        {
+            var shortDateStr = DateTime.Today.ToShortDateString().Replace("/", "-");
+            return $"{HostNamePrefix}_{shortDateStr}_{Guid.NewGuid()}";
+        }
+
         private static void HandleEventProcessorException(ExceptionReceivedEventArgs args)
         {
             _logger.LogError(args.Exception, $"Error occured processing vacancy events from partition: {args.PartitionId}.");
@@ -84,7 +92,7 @@ namespace Esfa.VacancyAnalytics.Jobs
             loggerFactory.AddDebug()
                 .AddConsole();
 
-            loggerFactory.AddNLog(new NLogProviderOptions {CaptureMessageProperties = true, CaptureMessageTemplates = true});
+            loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageProperties = true, CaptureMessageTemplates = true });
             NLog.LogManager.LoadConfiguration("nlog.config");
             return loggerFactory;
         }
