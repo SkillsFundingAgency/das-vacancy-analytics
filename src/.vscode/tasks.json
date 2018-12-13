@@ -12,20 +12,20 @@
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
-		},
+        },
         {
             "label": "runFunctionsHost",
             "type": "shell",
             "dependsOn": "build",
             "options": {
-              "cwd": "${workspaceFolder}/Functions/Esfa.VacancyAnalytics.Functions/bin/Debug/netcoreapp2.1"
+                "cwd": "${workspaceFolder}/Functions/bin/Debug/netcoreapp2.1"
             },
             "command": "func host start",
             "isBackground": true,
             "presentation": {
-              "reveal": "always"
+                "reveal": "always"
             },
             "problemMatcher": "$func-watch"
-          }
+        }
     ]
 }
