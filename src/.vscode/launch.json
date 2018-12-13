@@ -18,9 +18,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceRoot}/Jobs/Esfa.VacancyAnalytics.Jobs/bin/Debug/netcoreapp2.1/Esfa.VacancyAnalytics.Jobs.dll",
+            "program": "${workspaceRoot}/Jobs/bin/Debug/netcoreapp2.1/Esfa.VacancyAnalytics.Jobs.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Jobs/Esfa.VacancyAnalytics.Jobs",
+            "cwd": "${workspaceFolder}/Jobs",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
             "console": "internalConsole",
             "env": {
