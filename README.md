@@ -40,11 +40,11 @@ In order to run this solution locally you will need the following:
 #### Using docker hosted containers <a href="usingDocker"></a>
 The default development environment uses docker containers to host it's dependencies (outside of Azure EventHub).
 
-* SqlDb (hosted in a Linux :penguin: container if an existing installed SQL Server/LocalDB is not being used
+* SqlDb (hosted in a Linux :penguin: container if an existing installed SQL Server/LocalDB is not being used.
 * [Azurite](https://github.com/Azure/Azurite) (Cross platform Azure Storage Emulator) if an existing installed Azure Storage Emulator is not being used to emulate external storage queue.
 * Redis and ELK containers - These are created purely for logging from the app into a logstash pipeline for viewing/monitoring in Kibana. (Not essential)
 
-To start the containers copy the `docker-compose.yml` and `.docker` file from [das-recruit](https://github.com/SkillsFundingAgency/das-recruit/tree/master/setup/containers) to a directory of your choice and then run the following from the directory:
+To start the containers copy the [`docker-compose.yml`](https://github.com/SkillsFundingAgency/das-recruit/tree/master/setup/containers/docker-compose.yml) and [`.docker`](https://github.com/SkillsFundingAgency/das-recruit/tree/master/setup/containers/) file and folder from [das-recruit](https://github.com/SkillsFundingAgency/das-recruit/tree/master/setup/containers) to a directory of your choice and then run the following from the directory:
 
 >`docker-compose up -d`
 
@@ -92,17 +92,17 @@ Typical configuration settings with placeholders describing values that will nee
 
 ```json
 {
-    "IsEncrypted": false,
-    "Values": {
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "{Generate a new AppInsights instrumentation key in Azure portal for this functions app}",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "AzureWebJobsStorage": "{This should be a real Azure storage account}",
-        "VacancyEventHub": "{EventHub namespace not including the individual EventHub EntityPath}"
-    },
-    "ConnectionStrings": {
-        "VacancyAnalyticEventsSqlDbConnectionString": "{Connection string with the user that has read/write/execute priveleges}",
-        "QueueStorage": "{das-recruit storage account}"
-    }
+	"IsEncrypted": false,
+	"Values": {
+		"APPINSIGHTS_INSTRUMENTATIONKEY": "{Generate a new AppInsights instrumentation key in Azure portal for this functions app}",
+		"FUNCTIONS_WORKER_RUNTIME": "dotnet",
+		"AzureWebJobsStorage": "{This should be a real Azure storage account}",
+		"VacancyEventHub": "{EventHub namespace not including the individual EventHub EntityPath}"
+	},
+	"ConnectionStrings": {
+		"VacancyAnalyticEventsSqlDbConnectionString": "{Connection string with the user that has read/write/execute priveleges}",
+		"QueueStorage": "{das-recruit storage account}"
+	}
 }
 ```
 
@@ -123,10 +123,10 @@ Purpose: To read the events from the Azure `vacancy` event hub (generally as a s
 
 ```json
 {
-    "ConnectionStrings": {
-        "AzureWebJobsStorage": "{Must be a real Azure storage account connection string}",
-        "VacancyEventHub": "{Must be a real Azure EventHub account connection string with read priveleges}"
-    }
+	"ConnectionStrings": {
+		"AzureWebJobsStorage": "{Must be a real Azure storage account connection string}",
+		"VacancyEventHub": "{Must be a real Azure EventHub account connection string with read priveleges}"
+	}
 }
 ```
 
