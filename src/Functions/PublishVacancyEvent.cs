@@ -17,6 +17,7 @@ namespace Esfa.VacancyAnalytics.Functions
     {
         private const string LocalSettingsFileName = "local.settings.json";
         private const string VacancyEventHubConnStringKey = "VacancyEventHub";
+        private const string EventHubName = "vacancy";
         private static VacancyEventClient _client;
 
         [FunctionName("PublishVacancyEvent")]
@@ -31,14 +32,14 @@ namespace Esfa.VacancyAnalytics.Functions
                 .AddEnvironmentVariables()
                 .Build();
 
-            var vacancyEventHubConnString = config.GetConnectionString(VacancyEventHubConnStringKey);
+            var vacancyEventHubConnString = config.GetValue<string>(VacancyEventHubConnStringKey);
 
             try
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var evt = JsonConvert.DeserializeObject<Esfa.VacancyAnalytics.Functions.Models.VacancyEvent>(requestBody);
 
-                _client = new VacancyEventClient(vacancyEventHubConnString, evt.PublisherId, new LoggerFactory().CreateLogger<VacancyEventClient>());
+                _client = new VacancyEventClient(vacancyEventHubConnString + ";EntityPath=" + EventHubName, evt.PublisherId, new LoggerFactory().CreateLogger<VacancyEventClient>());
                 await SendVacancyEvent(evt);
             }
             catch (InvalidOperationException)
