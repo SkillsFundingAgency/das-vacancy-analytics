@@ -2,16 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "functionAppName": {
-            "type": "string"
+        "resourceEnvironmentName": {
+           "type": "string"
+        },
+        "serviceName": {
+           "type": "string"
         },
         "sharedResourceGroupName": {
             "type": "string"
         },
-        "databaseName": {
-            "type": "string"
-        },
-        "sqlServerName": {
+        "sharedSqlServerName": {
             "type": "string"
         },
         "databaseSkuName": {
@@ -36,9 +36,6 @@
         "eventHubPartitionCount": {
             "type": "int"
         },
-        "appServicePlanName": {
-            "type": "string"
-        },
         "aseHostingEnvironmentName": {
             "type": "string",
             "defaultValue": ""
@@ -47,53 +44,54 @@
             "type": "string",
             "defaultValue": ""
         },
-        "storageAccountName": {
-            "type": "string"
-        },
         "databaseConnectionString": {
             "type": "string"
         },
         "recruitQueueConnectionString": {
             "type": "string"
         },
-        "workerAppServicePlanName": {
+        "configurationStorageConnectionString": {
             "type": "string"
         },
-        "workerAppServiceName": {
+        "loggingRedisConnectionString": {
             "type": "string"
         },
-        "ConfigurationStorageConnectionString": {
-            "type": "string"
-        },
-        "LoggingRedisConnectionString": {
-            "type": "string"
-        },
-        "LoggingRedisKey": {
+        "loggingRedisKey": {
             "type": "string"
         },
         "sessionRedisConnectionString": {
             "type": "string"
         }
     },
-    "variables": {},
+    "variables": {
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+        "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
+        "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
+        "storageAccountName": "[concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'),'str')]",
+        "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
+        "hubName": "vacancy",
+        "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]",
+        "workerAppServicePlanName": "[concat(variables('ResourceNamePrefix'), 'wkr-asp')]"
+    },
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "SQLDatabase",
+            "name": "sql-database",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedResourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/sql-database.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'sql-database.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "databaseName": {
-                        "value": "[parameters('databaseName')]"
+                        "value": "[variables('databaseName')]"
                     },
                     "sqlServerName": {
-                        "value": "[parameters('sqlServerName')]"
+                        "value": "[parameters('sharedSqlServerName')]"
                     },
                     "databaseSkuName": {
                         "value": "[parameters('databaseSkuName')]"
@@ -115,18 +113,18 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "EventHub",
+            "name": "event-hub",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedResourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/event-hub-hub.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'event-hub-hub.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "hubName": {
-                        "value": "vacancy"
+                        "value": "[variables('hubName')]"
                     },
                     "eventHubNamespaceName": {
                         "value": "[parameters('eventHubNamespaceName')]"
@@ -139,17 +137,17 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "AppServicePlan",
+            "name": "app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('appServicePlanName')]"
+                        "value": "[variables('appServicePlanName')]"
                     },
                     "aseHostingEnvironmentName": {
                         "value": "[parameters('aseHostingEnvironmentName')]"
@@ -168,17 +166,17 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppServicePlan",
+            "name": "worker-app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-plan.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appServicePlanName": {
-                        "value": "[parameters('WorkerAppServicePlanName')]"
+                        "value": "[variables('WorkerAppServicePlanName')]"
                     },
                     "aspSize": {
                         "value": "1"
@@ -197,57 +195,57 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "StorageAccount",
+            "name": "storage-account",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'storage-account-arm.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
+                        "value": "[variables('storageAccountName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionAppInsights",
+            "name": "function-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('functionAppName')]"
+                        "value": "[variables('functionAppName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('functionAppName')]"
+                        "value": "[variables('functionAppName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionApp",
+            "name": "function-app",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "functionAppName": {
-                        "value": "[parameters('functionAppName')]"
+                        "value": "[variables('functionAppName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('appServicePlanName')]"
+                        "value": "[variables('appServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
@@ -295,40 +293,40 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppInsights",
+            "name": "worker-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[parameters('workerAppServiceName')]"
+                        "value": "[variables('workerAppServiceName')]"
                     },
                     "attachedService": {
-                        "value": "[parameters('workerAppServiceName')]"
+                        "value": "[variables('workerAppServiceName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppService",
+            "name": "worker-app-service",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "appServiceName": {
-                        "value": "[parameters('workerAppServiceName')]"
+                        "value": "[variables('workerAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('workerAppServicePlanName')]"
+                        "value": "[variables('workerAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
@@ -383,10 +381,23 @@
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan",
-                "StorageAccount"
+                "worker-app-service-plan",
+                "storage-account"
             ]
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "DatabaseName": {
+            "type": "string",
+            "value": "[variables('databaseName')]"
+        },
+        "WorkerAppServiceName": {
+            "type": "string",
+            "value": "[variables('workerAppServiceName')]"
+        },
+        "FunctionAppName": {
+           "type": "string",
+           "value": "[variables('functionAppName')]"
+        }
+    }
 }
