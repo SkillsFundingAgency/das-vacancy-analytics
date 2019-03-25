@@ -68,7 +68,7 @@
         },
         "aspInstances": {
             "type": "int",
-            "defaultValue": "1"
+            "defaultValue": 1
         }
     },
     "variables": {
