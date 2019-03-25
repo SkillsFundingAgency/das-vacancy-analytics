@@ -67,7 +67,7 @@
             "defaultValue": "1"
         },
         "aspInstances": {
-            "type": "string",
+            "type": "int",
             "defaultValue": "1"
         }
     },
