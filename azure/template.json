@@ -61,6 +61,14 @@
         },
         "sessionRedisConnectionString": {
             "type": "string"
+        },
+        "aspSize": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "aspInstances": {
+            "type": "string",
+            "defaultValue": "1"
         }
     },
     "variables": {
@@ -71,8 +79,7 @@
         "storageAccountName": "[concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'),'str')]",
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "hubName": "vacancy",
-        "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]",
-        "workerAppServicePlanName": "[concat(variables('ResourceNamePrefix'), 'wkr-asp')]"
+        "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]"
     },
     "resources": [
         {
@@ -156,39 +163,10 @@
                         "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
-                        "value": "1"
+                        "value": "[parameters('aspSize')]"
                     },
                     "aspInstances": {
-                        "value": 1
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "worker-app-service-plan",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServicePlanName": {
-                        "value": "[variables('WorkerAppServicePlanName')]"
-                    },
-                    "aspSize": {
-                        "value": "1"
-                    },
-                    "aspInstances": {
-                        "value": 1
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
+                        "value": "[parameters('aspInstances')]"
                     }
                 }
             }
@@ -326,7 +304,7 @@
                         "value": "[variables('workerAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('workerAppServicePlanName')]"
+                        "value": "[variables('appServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
@@ -381,7 +359,7 @@
                 }
             },
             "dependsOn": [
-                "worker-app-service-plan",
+                "app-service-plan",
                 "storage-account"
             ]
         }
