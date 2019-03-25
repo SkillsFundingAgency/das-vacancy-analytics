@@ -77,7 +77,7 @@
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "SQLDatabase",
+            "name": "sql-database",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedResourceGroupName')]",
             "properties": {
@@ -113,7 +113,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "EventHub",
+            "name": "event-hub",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedResourceGroupName')]",
             "properties": {
@@ -137,7 +137,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "AppServicePlan",
+            "name": "app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -166,7 +166,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppServicePlan",
+            "name": "worker-app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -195,7 +195,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "StorageAccount",
+            "name": "storage-account",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -212,7 +212,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionAppInsights",
+            "name": "function-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -232,7 +232,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionApp",
+            "name": "function-app",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -293,7 +293,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppInsights",
+            "name": "worker-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -313,7 +313,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppService",
+            "name": "worker-app-service",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -381,8 +381,8 @@
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan",
-                "StorageAccount"
+                "worker-app-service-plan",
+                "storage-account"
             ]
         }
     ],
