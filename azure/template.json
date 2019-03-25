@@ -232,7 +232,7 @@
                         "value": [
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -240,11 +240,11 @@
                             },
                             {
                                 "name": "AzureWebJobsStorage",
-                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
                             },
                             {
                                 "name": "VacancyEventHub",
-                                "value": "[reference('EventHub').outputs.HubEndpointReadOnly.value]"
+                                "value": "[reference('event-hub').outputs.HubEndpointReadOnly.value]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -328,7 +328,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('WorkerAppInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('worker-app-insights').outputs.InstrumentationKey.value]"
                             }
                         ]
                     },
@@ -336,12 +336,12 @@
                         "value": [
                             {
                                 "name": "AzureWebJobsDashboard",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
+                                "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
                                 "type": "Custom"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
-                                "connectionString": "[reference('StorageAccount').outputs.storageConnectionString.value]",
+                                "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
                                 "type": "Custom"
                             },
                             {
