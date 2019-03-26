@@ -244,7 +244,7 @@
                             },
                             {
                                 "name": "VacancyEventHub",
-                                "value": "[reference('event-hub').outputs.HubEndpointReadOnly.value]"
+                                "value": "[reference('event-hub').outputs.HubEndpoint.value]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
