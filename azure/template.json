@@ -353,7 +353,23 @@
                                 "name": "VacancyAnalyticEventsSqlDbConnectionString",
                                 "connectionString": "[parameters('databaseConnectionString')]",
                                 "type": "Custom"
+                            },
+                            {
+                                "name": "VacancyEventHub",
+                                "value": "[reference('event-hub').outputs.HubEndpointReadOnly.value]"
                             }
+                        ]
+                    },
+                    "appServiceVirtualApplications": {
+                        "value": [
+                          {
+                            "virtualPath": "/",
+                            "physicalPath": "site\\wwwroot"
+                          },
+                          {
+                            "virtualPath": "/Vacancy.Analytics.Jobs",
+                            "physicalPath": "site\\wwwroot\\app_data\\jobs\\continuous\\Vacancy.Analytics.Jobs"
+                          }
                         ]
                     }
                 }
