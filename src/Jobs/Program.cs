@@ -77,7 +77,7 @@ namespace Esfa.VacancyAnalytics.Jobs
         private static string GetUniqueEventHostProcessorName()
         {
             var shortDateStr = DateTime.Today.ToShortDateString().Replace("/", "-").ToLower();
-            return $"{HostNamePrefix}_{shortDateStr}_{Guid.NewGuid().ToString().ToLower()}";
+            return $"{HostNamePrefix}-{shortDateStr}-{Guid.NewGuid().ToString().ToLower()}";
         }
 
         private static void HandleEventProcessorException(ExceptionReceivedEventArgs args)
