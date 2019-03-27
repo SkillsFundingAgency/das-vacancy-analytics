@@ -356,7 +356,7 @@
                             },
                             {
                                 "name": "VacancyEventHub",
-                                "value": "[reference('event-hub').outputs.HubEndpointReadOnly.value]",
+                                "connectionString": "[reference('event-hub').outputs.HubEndpointReadOnly.value]",
                                 "type": "Custom"
                             }
                         ]
