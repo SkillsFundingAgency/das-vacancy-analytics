@@ -5,6 +5,9 @@
         "resourceEnvironmentName": {
            "type": "string"
         },
+        "environmentFullName": {
+           "type": "string"
+        },
         "serviceName": {
            "type": "string"
         },
@@ -325,6 +328,10 @@
                             {
                                 "name": "LoggingRedisKey",
                                 "value": "[parameters('loggingRedisKey')]"
+                            },
+                            {
+                                "name": "ASPNETCORE_ENVIRONMENT",
+                                "value": "[toUpper(parameters('environmentFullName'))]"
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",

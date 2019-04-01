@@ -89,8 +89,9 @@ namespace Esfa.VacancyAnalytics.Jobs
         {
             var loggerFactory = new LoggerFactory();
 
-            loggerFactory.AddDebug()
-                .AddConsole();
+            loggerFactory
+            .AddDebug()
+            .AddConsole();
 
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageProperties = true, CaptureMessageTemplates = true });
             NLog.LogManager.LoadConfiguration("nlog.config");
