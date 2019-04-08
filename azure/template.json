@@ -88,6 +88,10 @@
         "keyVaultCertificateName": {
             "type": "string",
             "defaultValue": ""
+        },
+        "ipSecurityRestrictions": {
+           "type": "array",
+           "defaultValue": []
         }
     },
     "variables": {
@@ -270,6 +274,9 @@
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('ipSecurityRestrictions')]"
                     },
                     "functionAppAppSettings": {
                         "value": [
