@@ -90,7 +90,8 @@
             "defaultValue": ""
         },
         "ipSecurityRestrictions": {
-           "type": "array"
+           "type": "array",
+           "defaultValue": []
         }
     },
     "variables": {
