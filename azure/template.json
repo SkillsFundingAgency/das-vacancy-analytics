@@ -89,7 +89,11 @@
             "type": "string",
             "defaultValue": ""
         },
-        "ipSecurityRestrictions": {
+        "wafOutboundIpAddresses": {
+           "type": "array",
+           "defaultValue": []
+        },
+        "dfeOutboundIpAddresses": {
            "type": "array",
            "defaultValue": []
         }
@@ -276,7 +280,7 @@
                         "value": "[resourceGroup().name]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('ipSecurityRestrictions')]"
+                        "value": "[concat(parameters('wafOutboundIpAddresses'), parameters('dfeOutboundIpAddresses'))]"
                     },
                     "functionAppAppSettings": {
                         "value": [
