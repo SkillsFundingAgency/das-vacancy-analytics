@@ -29,7 +29,7 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
         {
             _checkpointStopwatch.Stop();
             _log.LogInformation($@"{nameof(VacancyEventProcessor)} shutting down. Partition '{context.PartitionId}', Reason: '{reason}'. 
-			Alive for {_checkpointStopwatch.Elapsed.ToString(TimeTakenDisplayFormat)}.");
+            Alive for {_checkpointStopwatch.Elapsed.ToString(TimeTakenDisplayFormat)}.");
             await Task.CompletedTask;
         }
 

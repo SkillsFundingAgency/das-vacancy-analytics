@@ -63,13 +63,15 @@
     <Folder Include="VACANCY\" />
     <Folder Include="VACANCY\Tables\" />
     <Folder Include="Security\" />
+    <Folder Include="VACANCY\Stored Procedures\" />
+    <Folder Include="VACANCY\User-Defined Table Types\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="VACANCY\Tables\Event.sql" />
-	<Build Include="VACANCY\Stored Procedures\Event_GET_EventsSummaryForVacancy.sql" />
-	<Build Include="VACANCY\Stored Procedures\Event_GET_RecentlyAffectedVacancies.sql" />
-	<Build Include="VACANCY\Stored Procedures\Event_INSERT_BatchEvents.sql" />
-	<Build Include="VACANCY\User-Defined Table Types\VacancyEventsTableType.sql" />	
+    <Build Include="VACANCY\Stored Procedures\Event_GET_EventsSummaryForVacancy.sql" />
+    <Build Include="VACANCY\Stored Procedures\Event_GET_RecentlyAffectedVacancies.sql" />
+    <Build Include="VACANCY\Stored Procedures\Event_INSERT_BatchEvents.sql" />
+    <Build Include="VACANCY\User-Defined Table Types\VacancyEventsTableType.sql" />
     <Build Include="Security\VACANCY.sql" />
   </ItemGroup>
   <ItemGroup>

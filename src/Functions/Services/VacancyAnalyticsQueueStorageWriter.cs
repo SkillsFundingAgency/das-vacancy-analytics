@@ -6,12 +6,12 @@ using Newtonsoft.Json;
 
 namespace Esfa.VacancyAnalytics.Functions.Services
 {
-    internal sealed class QueueStorageWriter
+    internal sealed class VacancyAnalyticsQueueStorageWriter : IVacancyAnalyticsQueueStorageWriter
     {
         private readonly string _connectionString;
         private const string GenerateVacancyAnalyticsQueueName = "generate-vacancy-analytics-summary";
 
-        public QueueStorageWriter(string queueStorageConnString)
+        public VacancyAnalyticsQueueStorageWriter(string queueStorageConnString)
         {
             _connectionString = queueStorageConnString;
         }
@@ -24,7 +24,7 @@ namespace Esfa.VacancyAnalytics.Functions.Services
             var queue = client.GetQueueReference(GenerateVacancyAnalyticsQueueName);
             await queue.CreateIfNotExistsAsync();
 
-            var message = new CloudQueueMessage(JsonConvert.SerializeObject(new {VacancyReference = vacancyReference}));
+            var message = new CloudQueueMessage(JsonConvert.SerializeObject(new { VacancyReference = vacancyReference }));
 
             await queue.AddMessageAsync(message);
         }

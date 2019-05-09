@@ -8,52 +8,32 @@ using Microsoft.Extensions.Logging;
 
 namespace Esfa.VacancyAnalytics.Functions
 {
-    public static class EnqueueVacancyAnalyticsSummaryGenerator
+    public class EnqueueVacancyAnalyticsSummaryGenerator
     {
-        private const string LocalSettingsFileName = "local.settings.json";
         private const string VacancyEventStoreConnStringKey = "VacancyAnalyticEventsSqlDbConnectionString";
         private const string QueueStorageConnStringKey = "QueueStorage";
+        private readonly ILogger<EnqueueVacancyAnalyticsSummaryGenerator> _log;
+        private readonly IConfiguration _config;
 
-        private static IConfigurationRoot _config;
-        private static object _syncRoot = new object();
+        public EnqueueVacancyAnalyticsSummaryGenerator(ILogger<EnqueueVacancyAnalyticsSummaryGenerator> log, IConfiguration config)
+        {
+            _log = log;
+            _config = config;
+        }
 
         [FunctionName("EnqueueVacancyAnalyticsSummaryGenerator")]
-        public static async Task Run([TimerTrigger("0 1 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public async Task Run([TimerTrigger("0 1 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             log.LogInformation($"C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function executed at: {DateTime.UtcNow}");
 
-            var config = GetConfiguration(context.FunctionAppDirectory);
+            var reader = new VacancyEventStoreReader(_config.GetConnectionString(VacancyEventStoreConnStringKey), log);
 
-            var reader = new VacancyEventStoreReader(config.GetConnectionString(VacancyEventStoreConnStringKey), log);
-
-            var queue = new QueueStorageWriter(config.GetConnectionString(QueueStorageConnStringKey));
+            var queue = new VacancyAnalyticsQueueStorageWriter(_config.GetConnectionString(QueueStorageConnStringKey));
 
             var vacancyRefs = await reader.GetRecentlyAffectedVacanciesAsync(lastNoOfHours: 1);
             await Task.WhenAll(vacancyRefs.Select(vr => queue.QueueVacancyAsync(vr)));
 
-            log.LogInformation($"Finished C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function finished at: {DateTime.UtcNow}");
-        }
-
-        private static IConfigurationRoot GetConfiguration(string functionAppDirectory)
-        {
-            if (_config != null)
-            {
-                return _config;
-            }
-
-            lock (_syncRoot)
-            {
-                if (_config == null)
-                {
-                    _config = new ConfigurationBuilder()
-                                .SetBasePath(functionAppDirectory)
-                                .AddJsonFile(LocalSettingsFileName, optional: true, reloadOnChange: true)
-                                .AddEnvironmentVariables()
-                                .Build();
-                }
-            }
-
-            return _config;
+            log.LogInformation($"Finished C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function completed at: {DateTime.UtcNow}");
         }
     }
 }

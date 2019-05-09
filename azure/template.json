@@ -303,6 +303,10 @@
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
+                            },
+                            {
+                                "name": "FUNCTIONS_ENVIRONMENT",
+                                "value": "[toUpper(parameters('environmentFullName'))]"
                             }
                         ]
                     },
@@ -317,7 +321,12 @@
                                 "name": "QueueStorage",
                                 "connectionString": "[parameters('recruitQueueConnectionString')]",
                                 "type": "Custom"
-                            }
+                            },
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
+                            },
                         ]
                     },
                     "customHostName": {

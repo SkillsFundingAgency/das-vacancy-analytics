@@ -8,7 +8,7 @@ using Polly;
 
 namespace Esfa.VacancyAnalytics.Functions.Services
 {
-    public class VacancyEventStoreReader : VacancyEventStore
+    public class VacancyEventStoreReader : VacancyEventStore, IVacancyEventStoreReader
     {
         private readonly string _vacancyEventStoreConnString;
         private const string RecentlyAffectedVacanciesSproc = "[VACANCY].[Event_GET_RecentlyAffectedVacancies]";

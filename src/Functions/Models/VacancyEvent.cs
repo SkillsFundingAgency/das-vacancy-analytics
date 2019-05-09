@@ -1,5 +1,3 @@
-using System;
-
 namespace Esfa.VacancyAnalytics.Functions.Models
 {
     internal struct VacancyEvent
