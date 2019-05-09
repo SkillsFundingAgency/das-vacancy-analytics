@@ -10,7 +10,7 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
     public abstract class VacancyEventStore
     {
         protected readonly ILogger _log;
-        protected readonly RetryPolicy _retryPolicy;
+        protected readonly AsyncRetryPolicy _retryPolicy;
 
         public VacancyEventStore(ILogger log)
         {
@@ -18,7 +18,7 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
             _retryPolicy = GetRetryPolicy(_log);
         }
 
-        private Polly.Retry.RetryPolicy GetRetryPolicy(ILogger log) => Policy
+        private AsyncRetryPolicy GetRetryPolicy(ILogger log) => Policy
             .Handle<SqlException>()
             .Or<DbException>()
             .WaitAndRetryAsync(new[]
