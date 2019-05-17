@@ -26,18 +26,20 @@ namespace Esfa.VacancyAnalytics.Functions.Services
             {
                 await conn.OpenAsync();
 
-                var command = conn.CreateCommand();
-
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = RecentlyAffectedVacanciesSproc;
-
-                var inputParam = command.Parameters.AddWithValue("@LastNoOfHours", lastNoOfHours);
-
-                var reader = await _retryPolicy.ExecuteAsync(async context => await command.ExecuteReaderAsync(), new Context(nameof(GetRecentlyAffectedVacanciesAsync)));
-
-                while (await reader.ReadAsync())
+                using (var command = conn.CreateCommand())
                 {
-                    vacancyRefs.Add(reader.GetInt64(0));
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = RecentlyAffectedVacanciesSproc;
+
+                    var inputParam = command.Parameters.AddWithValue("@LastNoOfHours", lastNoOfHours);
+
+                    using (var reader = await _retryPolicy.ExecuteAsync(async context => await command.ExecuteReaderAsync(), new Context(nameof(GetRecentlyAffectedVacanciesAsync))))
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            vacancyRefs.Add(reader.GetInt64(0));
+                        }
+                    }
                 }
             }
 

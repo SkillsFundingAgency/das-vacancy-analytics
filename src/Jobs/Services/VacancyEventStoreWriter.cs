@@ -23,15 +23,16 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
             {
                 await conn.OpenAsync();
 
-                var command = conn.CreateCommand();
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = VacancyEventsBatchInsertSproc;
 
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = VacancyEventsBatchInsertSproc;
+                    var inputParam = command.Parameters.AddWithValue("@VE", dt);
+                    inputParam.SqlDbType = SqlDbType.Structured;
 
-                var inputParam = command.Parameters.AddWithValue("@VE", dt);
-                inputParam.SqlDbType = SqlDbType.Structured;
-
-                await _retryPolicy.ExecuteAsync(async context => await command.ExecuteNonQueryAsync(), new Context(nameof(SaveEventDataAsync)));
+                    await _retryPolicy.ExecuteAsync(async context => await command.ExecuteNonQueryAsync(), new Context(nameof(SaveEventDataAsync)));
+                }
             }
         }
     }
