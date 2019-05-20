@@ -6,6 +6,9 @@ AS
 	BEGIN TRY
 		BEGIN TRANSACTION
 
+	DECLARE @Now DATETIME = GETUTCDATE()
+	DECLARE @25HoursPrior DATETIME = DATEADD(HH, -25, @Now)
+
 		;WITH cte_ExistingEvents AS
 		(
 			SELECT	Id
@@ -15,6 +18,7 @@ AS
 											DISTINCT	VacancyReference
 											FROM		@VE
 										)
+			AND		EventTime BETWEEN @25HoursPrior AND @Now
 		)
 
 		INSERT
