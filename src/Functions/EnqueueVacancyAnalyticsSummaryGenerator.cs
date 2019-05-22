@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Esfa.VacancyAnalytics.Functions.Services;
 using Microsoft.Azure.WebJobs;
@@ -13,27 +14,46 @@ namespace Esfa.VacancyAnalytics.Functions
         private const string VacancyEventStoreConnStringKey = "VacancyAnalyticEventsSqlDbConnectionString";
         private const string QueueStorageConnStringKey = "QueueStorage";
 
+        private static IConfigurationRoot _config;
+        private static object _syncRoot = new object();
+
         [FunctionName("EnqueueVacancyAnalyticsSummaryGenerator")]
         public static async Task Run([TimerTrigger("0 1 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
-            log.LogInformation($"C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function executed at: {DateTime.Now}");
+            log.LogInformation($"C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function executed at: {DateTime.UtcNow}");
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(context.FunctionAppDirectory)
-                .AddJsonFile(LocalSettingsFileName, optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
+            var config = GetConfiguration(context.FunctionAppDirectory);
 
             var reader = new VacancyEventStoreReader(config.GetConnectionString(VacancyEventStoreConnStringKey), log);
 
             var queue = new QueueStorageWriter(config.GetConnectionString(QueueStorageConnStringKey));
 
             var vacancyRefs = await reader.GetRecentlyAffectedVacanciesAsync(lastNoOfHours: 1);
+            await Task.WhenAll(vacancyRefs.Select(vr => queue.QueueVacancyAsync(vr)));
 
-            foreach (var vacancyRef in vacancyRefs)
+            log.LogInformation($"Finished C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function finished at: {DateTime.UtcNow}");
+        }
+
+        private static IConfigurationRoot GetConfiguration(string functionAppDirectory)
+        {
+            if (_config != null)
             {
-                await queue.QueueVacancyAsync(vacancyRef);
+                return _config;
             }
+
+            lock (_syncRoot)
+            {
+                if (_config == null)
+                {
+                    _config = new ConfigurationBuilder()
+                                .SetBasePath(functionAppDirectory)
+                                .AddJsonFile(LocalSettingsFileName, optional: true, reloadOnChange: true)
+                                .AddEnvironmentVariables()
+                                .Build();
+                }
+            }
+
+            return _config;
         }
     }
 }
