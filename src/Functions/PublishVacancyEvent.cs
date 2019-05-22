@@ -18,7 +18,9 @@ namespace Esfa.VacancyAnalytics.Functions
         private const string LocalSettingsFileName = "local.settings.json";
         private const string VacancyEventHubConnStringKey = "VacancyEventHub";
         private const string EventHubName = "vacancy";
-        private static VacancyEventClient _client;
+
+        private static IConfigurationRoot _config;
+        private static object _syncRoot = new object();
 
         [FunctionName("PublishVacancyEvent")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "events")]
@@ -26,21 +28,23 @@ namespace Esfa.VacancyAnalytics.Functions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(context.FunctionAppDirectory)
-                .AddJsonFile(LocalSettingsFileName, optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
+            var config = GetConfiguration(context.FunctionAppDirectory);
 
             var vacancyEventHubConnString = config.GetValue<string>(VacancyEventHubConnStringKey);
 
             try
             {
-                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                string requestBody = string.Empty;
+
+                using (var sr = new StreamReader(req.Body))
+                {
+                    requestBody = await sr.ReadToEndAsync();
+                }
+
                 var evt = JsonConvert.DeserializeObject<Esfa.VacancyAnalytics.Functions.Models.VacancyEvent>(requestBody);
 
-                _client = new VacancyEventClient(vacancyEventHubConnString + ";EntityPath=" + EventHubName, evt.PublisherId, new LoggerFactory().CreateLogger<VacancyEventClient>());
-                await SendVacancyEvent(evt);
+                var client = new VacancyEventClient(vacancyEventHubConnString + ";EntityPath=" + EventHubName, evt.PublisherId, new LoggerFactory().CreateLogger<VacancyEventClient>());
+                await SendVacancyEvent(client, evt);
             }
             catch (InvalidOperationException)
             {
@@ -55,22 +59,44 @@ namespace Esfa.VacancyAnalytics.Functions
             return new OkResult();
         }
 
-        private static Task SendVacancyEvent(Esfa.VacancyAnalytics.Functions.Models.VacancyEvent evt)
+        private static IConfigurationRoot GetConfiguration(string functionAppDirectory)
+        {
+            if (_config != null)
+            {
+                return _config;
+            }
+            
+            lock(_syncRoot)
+            {
+                if (_config == null)
+                {
+                    _config = new ConfigurationBuilder()
+                                .SetBasePath(functionAppDirectory)
+                                .AddJsonFile(LocalSettingsFileName, optional: true, reloadOnChange: true)
+                                .AddEnvironmentVariables()
+                                .Build();
+                }
+            }
+
+            return _config;
+        }
+
+        private static Task SendVacancyEvent(VacancyEventClient client, Esfa.VacancyAnalytics.Functions.Models.VacancyEvent evt)
         {
             switch (evt.EventType)
             {
                 case nameof(ApprenticeshipSearchImpressionEvent):
-                    return _client.PushApprenticeshipSearchEventAsync(evt.VacancyReference);
+                    return client.PushApprenticeshipSearchEventAsync(evt.VacancyReference);
                 case nameof(ApprenticeshipSavedSearchAlertImpressionEvent):
-                    return _client.PushApprenticeshipSavedSearchAlertEventAsync(evt.VacancyReference);
+                    return client.PushApprenticeshipSavedSearchAlertEventAsync(evt.VacancyReference);
                 case nameof(ApprenticeshipBookmarkedImpressionEvent):
-                    return _client.PushApprenticeshipBookmarkedEventAsync(evt.VacancyReference);
+                    return client.PushApprenticeshipBookmarkedEventAsync(evt.VacancyReference);
                 case nameof(ApprenticeshipDetailImpressionEvent):
-                    return _client.PushApprenticeshipDetailEventAsync(evt.VacancyReference);
+                    return client.PushApprenticeshipDetailEventAsync(evt.VacancyReference);
                 case nameof(ApprenticeshipApplicationCreatedEvent):
-                    return _client.PushApprenticeshipApplicationCreatedEventAsync(evt.VacancyReference);
+                    return client.PushApprenticeshipApplicationCreatedEventAsync(evt.VacancyReference);
                 case nameof(ApprenticeshipApplicationSubmittedEvent):
-                    return _client.PushApprenticeshipApplicationSubmittedEventAsync(evt.VacancyReference);
+                    return client.PushApprenticeshipApplicationSubmittedEventAsync(evt.VacancyReference);
                 default:
                     throw new InvalidOperationException($"Cannot publish event {evt.EventType} for {evt.VacancyReference}");
             }
