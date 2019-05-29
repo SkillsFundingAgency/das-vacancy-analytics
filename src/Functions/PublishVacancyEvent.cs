@@ -17,16 +17,10 @@ namespace Esfa.VacancyAnalytics.Functions
         private readonly IVacancyEventClient _client;
         private readonly ILogger<PublishVacancyEvent> _log;
 
-        public PublishVacancyEvent(ILogger<PublishVacancyEvent> log, IVacancyEventClient client, ILoggerProvider prov, ILoggerFactory factory)
+        public PublishVacancyEvent(ILogger<PublishVacancyEvent> log, IVacancyEventClient client)
         {
             _log = log;
             _client = client;
-
-            var provLogger = prov.CreateLogger("provLogger");
-            provLogger.LogError("THIS IS FROM THE CTOR");
-
-            var c = factory.CreateLogger<VacancyEventClient>();
-            c.LogError("BLAH BLAH BLAH Secondary logger");
         }
 
         [FunctionName("PublishVacancyEvent")]
