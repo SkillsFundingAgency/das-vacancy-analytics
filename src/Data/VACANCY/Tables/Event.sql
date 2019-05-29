@@ -7,3 +7,7 @@
 	[EventType]			VARCHAR(100)		NOT NULL,
 	PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+GO
+
+CREATE INDEX [IX_VacancyReference] ON [VACANCY].[Event] ([VacancyReference])
+GO

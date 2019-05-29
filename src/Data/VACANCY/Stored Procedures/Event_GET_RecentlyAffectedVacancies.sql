@@ -7,10 +7,3 @@ AS
 	DISTINCT	VacancyReference
 	FROM		[VACANCY].[Event]
 	WHERE		EventTime > @CompareTime
-
-
-
-	-- maybe we need to add minutes
-
-
-	
