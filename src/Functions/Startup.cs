@@ -1,3 +1,5 @@
+using System.IO;
+using System.Reflection;
 using Esfa.Vacancy.Analytics;
 using Esfa.VacancyAnalytics.Functions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -16,7 +18,10 @@ namespace Esfa.VacancyAnalytics.Functions
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration("nlog.config");
+            var executingAssemblyLocation = Assembly.GetExecutingAssembly().Location;
+            var appDirectory = Directory.GetParent(executingAssemblyLocation).Parent;
+            var nlogConfigPath = Path.Combine(appDirectory.FullName, "nlog.config");
+            NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlogConfigPath);
 
             builder.Services.AddLogging(logBuilder =>
             {
