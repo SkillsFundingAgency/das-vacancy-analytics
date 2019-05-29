@@ -326,7 +326,7 @@
                                 "name": "Redis",
                                 "connectionString": "[parameters('loggingRedisConnectionString')]",
                                 "type": "Custom"
-                            },
+                            }
                         ]
                     },
                     "customHostName": {
