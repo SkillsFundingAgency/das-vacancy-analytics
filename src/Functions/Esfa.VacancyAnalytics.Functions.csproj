@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
-  <RootNamespace>Esfa.VacancyAnalytics.Functions</RootNamespace>
-  <AssemblyName>Esfa.VacancyAnalytics.Functions</AssemblyName>
+    <RootNamespace>Esfa.VacancyAnalytics.Functions</RootNamespace>
+    <AssemblyName>Esfa.VacancyAnalytics.Functions</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.9.1" />
@@ -32,9 +32,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
-    <None Update="nlog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 </Project>
