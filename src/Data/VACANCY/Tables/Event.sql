@@ -11,3 +11,6 @@ GO
 
 CREATE INDEX [IX_VacancyReference] ON [VACANCY].[Event] ([VacancyReference])
 GO
+
+CREATE NONCLUSTERED INDEX [IX_VacancyEventTime] ON [VACANCY].[Event] ([EventTime]) INCLUDE ([VacancyReference]) WITH (ONLINE = ON)
+GO
