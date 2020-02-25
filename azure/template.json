@@ -408,11 +408,6 @@
                     "appServiceConnectionStrings": {
                         "value": [
                             {
-                                "name": "AzureWebJobsDashboard",
-                                "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
-                                "type": "Custom"
-                            },
-                            {
                                 "name": "AzureWebJobsStorage",
                                 "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
                                 "type": "Custom"
@@ -431,6 +426,10 @@
                                 "name": "VacancyEventHub",
                                 "connectionString": "[reference('event-hub').outputs.HubEndpointReadOnly.value]",
                                 "type": "Custom"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
                             }
                         ]
                     },
