@@ -28,7 +28,7 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
         public async Task CloseAsync(PartitionContext context, CloseReason reason)
         {
             _checkpointStopwatch.Stop();
-            _log.LogInformation($@"{nameof(VacancyEventProcessor)} shutting down. Partition '{context.PartitionId}', Reason: '{reason}'. 
+            _log.LogInformation($@"{nameof(VacancyEventProcessor)} shutting down. Partition '{context.PartitionId}', Reason: '{reason}'.
             Alive for {_checkpointStopwatch.Elapsed.ToString(TimeTakenDisplayFormat)}.");
             await Task.CompletedTask;
         }

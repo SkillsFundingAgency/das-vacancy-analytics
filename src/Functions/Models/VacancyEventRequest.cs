@@ -1,6 +1,6 @@
 namespace Esfa.VacancyAnalytics.Functions.Models
 {
-    internal struct VacancyEvent
+    internal struct VacancyEventRequest
     {
         public long VacancyReference { get; set; }
         public string EventType { get; set; }
