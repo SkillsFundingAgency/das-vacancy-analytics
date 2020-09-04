@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Logging;
 using Polly;
 
@@ -20,7 +21,10 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
         public async Task SaveEventDataAsync(DataTable dt)
         {
             using (var conn = new SqlConnection(_vacancyEventStoreConnString))
-            {
+            {                
+                AzureServiceTokenProvider tokenProvider = new AzureServiceTokenProvider();
+                string accessToken = await tokenProvider.GetAccessTokenAsync("https://database.windows.net/");
+                conn.AccessToken = accessToken;
                 await conn.OpenAsync();
 
                 using (var command = conn.CreateCommand())
