@@ -43,7 +43,7 @@
         "eventHubPartitionCount": {
             "type": "int"
         },
-        "SqlConnectionString": {
+        "sqlConnectionString": {
             "type": "string"
         },
         "recruitQueueConnectionString": {
@@ -303,7 +303,7 @@
                         "value": [
                             {
                                 "name": "VacancyAnalyticEventsSqlDbConnectionString",
-                                "connectionString": "[parameters('SqlConnectionString')]",
+                                "connectionString": "[parameters('sqlConnectionString')]",
                                 "type": "Custom"
                             },
                             {
@@ -408,7 +408,7 @@
                             },
                             {
                                 "name": "VacancyAnalyticEventsSqlDbConnectionString",
-                                "connectionString": "[parameters('SqlConnectionString')]",
+                                "connectionString": "[parameters('sqlConnectionString')]",
                                 "type": "Custom"
                             },
                             {
