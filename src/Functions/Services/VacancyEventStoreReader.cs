@@ -26,7 +26,7 @@ namespace Esfa.VacancyAnalytics.Functions.Services
             using (var conn = new SqlConnection(_vacancyEventStoreConnString))
             {
                 AzureServiceTokenProvider tokenProvider = new AzureServiceTokenProvider();
-                string accessToken = await tokenProvider.GetAccessTokenAsync("https://database.windows.net/");
+                string accessToken = await tokenProvider.GetAccessTokenAsync("https://database.windows.net/").Result;
                 conn.AccessToken = accessToken;
                 await conn.OpenAsync();
 
