@@ -32,7 +32,7 @@
 
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="3.0.5" />
 
-        <PackageReference Include="SFA.DAS.Vacancy.Analytics.Client" Version="1.0.87" />
+        <PackageReference Include="SFA.DAS.Vacancy.Analytics.Client" Version="1.0.93" />
     </ItemGroup>
     <ItemGroup>
         <None Update="appSettings.json">
