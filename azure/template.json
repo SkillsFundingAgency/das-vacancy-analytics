@@ -58,9 +58,6 @@
         "loggingRedisKey": {
             "type": "string"
         },
-        "sessionRedisConnectionString": {
-            "type": "string"
-        },
         "aspSize": {
             "type": "string",
             "defaultValue": "1"
@@ -403,7 +400,7 @@
                             },
                             {
                                 "name": "Redis",
-                                "connectionString": "[parameters('sessionRedisConnectionString')]",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
                                 "type": "Custom"
                             },
                             {
