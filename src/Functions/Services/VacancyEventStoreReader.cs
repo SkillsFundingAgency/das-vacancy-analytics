@@ -12,10 +12,12 @@ namespace Esfa.VacancyAnalytics.Functions.Services
     {
         private readonly string _vacancyEventStoreConnString;
         private const string RecentlyAffectedVacanciesSproc = "[VACANCY].[Event_GET_RecentlyAffectedVacancies]";
+        private readonly string _accessToken;
 
-        public VacancyEventStoreReader(string vacancyEventStoreConnString, ILogger log) : base(log)
+        public VacancyEventStoreReader(string vacancyEventStoreConnString, string accessToken, ILogger log) : base(log)
         {
             _vacancyEventStoreConnString = vacancyEventStoreConnString;
+            _accessToken = accessToken;
         }
 
         public async Task<IEnumerable<long>> GetRecentlyAffectedVacanciesAsync(int lastNoOfHours)
@@ -24,6 +26,7 @@ namespace Esfa.VacancyAnalytics.Functions.Services
 
             using (var conn = new SqlConnection(_vacancyEventStoreConnString))
             {
+                conn.AccessToken = _accessToken;
                 await conn.OpenAsync();
 
                 using (var command = conn.CreateCommand())

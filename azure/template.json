@@ -43,15 +43,7 @@
         "eventHubPartitionCount": {
             "type": "int"
         },
-        "aseHostingEnvironmentName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "aseResourceGroup": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "databaseConnectionString": {
+        "sqlConnectionString": {
             "type": "string"
         },
         "recruitQueueConnectionString": {
@@ -64,9 +56,6 @@
             "type": "string"
         },
         "loggingRedisKey": {
-            "type": "string"
-        },
-        "sessionRedisConnectionString": {
             "type": "string"
         },
         "aspSize": {
@@ -214,12 +203,6 @@
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
                     },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
-                    },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
                     },
@@ -321,7 +304,7 @@
                         "value": [
                             {
                                 "name": "VacancyAnalyticEventsSqlDbConnectionString",
-                                "connectionString": "[parameters('databaseConnectionString')]",
+                                "connectionString": "[parameters('sqlConnectionString')]",
                                 "type": "Custom"
                             },
                             {
@@ -421,12 +404,12 @@
                             },
                             {
                                 "name": "Redis",
-                                "connectionString": "[parameters('sessionRedisConnectionString')]",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
                                 "type": "Custom"
                             },
                             {
                                 "name": "VacancyAnalyticEventsSqlDbConnectionString",
-                                "connectionString": "[parameters('databaseConnectionString')]",
+                                "connectionString": "[parameters('sqlConnectionString')]",
                                 "type": "Custom"
                             },
                             {

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Esfa.VacancyAnalytics.Functions.Services;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,8 @@ namespace Esfa.VacancyAnalytics.Functions
         private readonly ILogger<EnqueueVacancyAnalyticsSummaryGenerator> _log;
         private readonly IConfiguration _config;
 
+        AzureServiceTokenProvider tokenProvider = new AzureServiceTokenProvider();        
+
         public EnqueueVacancyAnalyticsSummaryGenerator(ILogger<EnqueueVacancyAnalyticsSummaryGenerator> log, IConfiguration config)
         {
             _log = log;
@@ -25,8 +28,10 @@ namespace Esfa.VacancyAnalytics.Functions
         public async Task Run([TimerTrigger("0 1 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             log.LogInformation($"C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function executed at: {DateTime.UtcNow}");
+            
+            var accessToken = await tokenProvider.GetAccessTokenAsync("https://database.windows.net/");
 
-            var reader = new VacancyEventStoreReader(_config.GetConnectionString(VacancyEventStoreConnStringKey), log);
+            var reader = new VacancyEventStoreReader(_config.GetConnectionString(VacancyEventStoreConnStringKey), accessToken, log);
 
             var queue = new VacancyAnalyticsQueueStorageWriter(_config.GetConnectionString(QueueStorageConnStringKey));
 

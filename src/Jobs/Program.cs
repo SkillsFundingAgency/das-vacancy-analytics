@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Esfa.VacancyAnalytics.Jobs.Services;
 using Microsoft.Azure.EventHubs;
 using Microsoft.Azure.EventHubs.Processor;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -39,8 +40,9 @@ namespace Esfa.VacancyAnalytics.Jobs
             var vacancyEventStoreConnString = config.GetConnectionString(VacancyEventStoreConnStringKey);
             var vacancyEventHubConnString = config.GetConnectionString(VacancyEventHubConnStringKey);
             var queueStorageConnString = config.GetConnectionString(QueueStorageConnStringKey);
+            var accessToken = await new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/");            
 
-            var eventStoreWriter = new VacancyEventStoreWriter(vacancyEventStoreConnString, loggerFactory.CreateLogger<VacancyEventStoreWriter>());
+            var eventStoreWriter = new VacancyEventStoreWriter(vacancyEventStoreConnString, accessToken, loggerFactory.CreateLogger<VacancyEventStoreWriter>());
 
             var factory = new EventProcessorFactory(loggerFactory.CreateLogger<VacancyEventProcessor>(), eventStoreWriter);
 

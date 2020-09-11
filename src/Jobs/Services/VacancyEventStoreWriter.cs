@@ -11,16 +11,19 @@ namespace Esfa.VacancyAnalytics.Jobs.Services
     {
         private readonly string _vacancyEventStoreConnString;
         private const string VacancyEventsBatchInsertSproc = "[VACANCY].[Event_INSERT_BatchEvents]";
+        private readonly string _accessToken;
 
-        public VacancyEventStoreWriter(string vacancyEventStoreConnString, ILogger log) : base(log)
+        public VacancyEventStoreWriter(string vacancyEventStoreConnString, string accessToken, ILogger log) : base(log)
         {
             _vacancyEventStoreConnString = vacancyEventStoreConnString;
+            _accessToken = accessToken;
         }
 
         public async Task SaveEventDataAsync(DataTable dt)
         {
             using (var conn = new SqlConnection(_vacancyEventStoreConnString))
             {
+                conn.AccessToken = _accessToken;
                 await conn.OpenAsync();
 
                 using (var command = conn.CreateCommand())
