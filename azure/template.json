@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourceEnvironmentName": {
-           "type": "string"
+            "type": "string"
         },
         "environmentFullName": {
-           "type": "string"
+            "type": "string"
         },
         "serviceName": {
-           "type": "string"
+            "type": "string"
         },
         "sharedResourceGroupName": {
             "type": "string"
@@ -52,22 +52,22 @@
             "defaultValue": ""
         },
         "databaseConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "recruitQueueConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "configurationStorageConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "loggingRedisConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "loggingRedisKey": {
             "type": "string"
         },
         "sessionRedisConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "aspSize": {
             "type": "string",
@@ -90,12 +90,12 @@
             "defaultValue": ""
         },
         "wafOutboundIpAddresses": {
-           "type": "array",
-           "defaultValue": []
+            "type": "array",
+            "defaultValue": []
         },
         "dfeOutboundIpAddresses": {
-           "type": "array",
-           "defaultValue": []
+            "type": "array",
+            "defaultValue": []
         },
         "functionsExtensionVersion": {
             "type": "string",
@@ -273,7 +273,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -290,51 +290,55 @@
                         "value": "[concat(parameters('wafOutboundIpAddresses'), parameters('dfeOutboundIpAddresses'))]"
                     },
                     "functionAppAppSettings": {
-                        "value": [
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "FUNCTIONS_WORKER_RUNTIME",
-                                "value": "dotnet"
-                            },
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-                            },
-                            {
-                                "name": "VacancyEventHub",
-                                "value": "[reference('event-hub').outputs.HubEndpoint.value]"
-                            },
-                            {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "[parameters('functionsExtensionVersion')]"
-                            },
-                            {
-                                "name": "FUNCTIONS_ENVIRONMENT",
-                                "value": "[toUpper(parameters('environmentFullName'))]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "VacancyEventHub",
+                                    "value": "[reference('event-hub').outputs.HubEndpoint.value]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_ENVIRONMENT",
+                                    "value": "[toUpper(parameters('environmentFullName'))]"
+                                }
+                            ]
+                        }
                     },
                     "functionAppConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "VacancyAnalyticEventsSqlDbConnectionString",
-                                "connectionString": "[parameters('databaseConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "QueueStorage",
-                                "connectionString": "[parameters('recruitQueueConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "VacancyAnalyticEventsSqlDbConnectionString",
+                                    "connectionString": "[parameters('databaseConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "QueueStorage",
+                                    "connectionString": "[parameters('recruitQueueConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('customHostName')]"
@@ -372,7 +376,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -389,67 +393,71 @@
                         "value": false
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "LoggingRedisConnectionString",
-                                "value": "[parameters('loggingRedisConnectionString')]"
-                            },
-                            {
-                                "name": "LoggingRedisKey",
-                                "value": "[parameters('loggingRedisKey')]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[toUpper(parameters('environmentFullName'))]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('worker-app-insights').outputs.InstrumentationKey.value]"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "LoggingRedisConnectionString",
+                                    "value": "[parameters('loggingRedisConnectionString')]"
+                                },
+                                {
+                                    "name": "LoggingRedisKey",
+                                    "value": "[parameters('loggingRedisKey')]"
+                                },
+                                {
+                                    "name": "ASPNETCORE_ENVIRONMENT",
+                                    "value": "[toUpper(parameters('environmentFullName'))]"
+                                },
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference('worker-app-insights').outputs.InstrumentationKey.value]"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('sessionRedisConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "VacancyAnalyticEventsSqlDbConnectionString",
-                                "connectionString": "[parameters('databaseConnectionString')]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "VacancyEventHub",
-                                "connectionString": "[reference('event-hub').outputs.HubEndpointReadOnly.value]",
-                                "type": "Custom"
-                            },
-                            {
-                                "name": "FUNCTIONS_WORKER_RUNTIME",
-                                "value": "dotnet"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('sessionRedisConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "VacancyAnalyticEventsSqlDbConnectionString",
+                                    "connectionString": "[parameters('databaseConnectionString')]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "VacancyEventHub",
+                                    "connectionString": "[reference('event-hub').outputs.HubEndpointReadOnly.value]",
+                                    "type": "Custom"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet"
+                                }
+                            ]
+                        }
                     },
                     "appServiceVirtualApplications": {
                         "value": [
-                          {
-                            "virtualPath": "/",
-                            "physicalPath": "site\\wwwroot"
-                          },
-                          {
-                            "virtualPath": "/Vacancy.Analytics.Jobs",
-                            "physicalPath": "site\\wwwroot\\app_data\\jobs\\continuous\\Vacancy.Analytics.Jobs"
-                          }
+                            {
+                                "virtualPath": "/",
+                                "physicalPath": "site\\wwwroot"
+                            },
+                            {
+                                "virtualPath": "/Vacancy.Analytics.Jobs",
+                                "physicalPath": "site\\wwwroot\\app_data\\jobs\\continuous\\Vacancy.Analytics.Jobs"
+                            }
                         ]
                     }
                 }
@@ -470,8 +478,8 @@
             "value": "[variables('workerAppServiceName')]"
         },
         "FunctionAppName": {
-           "type": "string",
-           "value": "[variables('functionAppName')]"
+            "type": "string",
+            "value": "[variables('functionAppName')]"
         }
     }
 }
