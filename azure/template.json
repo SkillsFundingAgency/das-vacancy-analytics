@@ -14,7 +14,7 @@
     "sharedSqlServerName": {
       "type": "string"
     },
-    "elasticPoolName": {
+    "elasticPoolName": { 
       "type": "string",
       "defaultValue": ""
     },
@@ -145,7 +145,7 @@
             "value": "[parameters('sharedEnvVirtualNetworkName')]"
           },
           "subnetName": {
-            "value": "[parameters('subnetObject')]"
+            "value": "[parameters('subnetObject').name]"
           },
           "subnetAddressPrefix": {
             "value": "[parameters('subnetObject').addressSpace]"
