@@ -328,9 +328,6 @@
           "appServicePlanName": {
             "value": "[variables('appServicePlanName')]"
           },
-          "appServicePlanResourceGroup": {
-            "value": "[variables('resourceGroupName')]"
-          },
           "subnetResourceId": {
             "value": "[reference('worker-app-service-subnet').outputs.subnetResourceId.value]"
           },
@@ -440,9 +437,6 @@
           },
           "appServicePlanName": {
             "value": "[variables('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[resourceGroup().name]"
           },
           "deployStagingSlot": {
             "value": false
