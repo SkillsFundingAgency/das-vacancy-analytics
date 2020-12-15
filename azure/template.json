@@ -2,16 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "resourceEnvironmentName": {
-      "type": "string"
-    },
-    "environmentFullName": {
+    "environmentName": {
       "type": "string"
     },
     "serviceName": {
       "type": "string"
     },
-    "sharedResourceGroupName": {
+    "SharedEnvResourceGroup": {
       "type": "string"
     },
     "sharedSqlServerName": {
@@ -42,14 +39,6 @@
     },
     "eventHubPartitionCount": {
       "type": "int"
-    },
-    "aseHostingEnvironmentName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "aseResourceGroup": {
-      "type": "string",
-      "defaultValue": ""
     },
     "databaseConnectionString": {
       "type": "securestring"
@@ -107,9 +96,6 @@
     "resourceGroupLocation": {
       "type": "string"
     },
-    "sharedEnvResourceGroup": {
-      "type": "string"
-    },
     "sharedEnvVirtualNetworkName": {
       "type": "string"
     },
@@ -125,10 +111,10 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "resourceNamePrefix": "[toLower(concat('das-', parameters('environmentName'),'-', parameters('serviceName')))]",
     "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
     "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
-    "storageAccountName": "[concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'),'str')]",
+    "storageAccountName": "[concat('das', parameters('environmentName'), parameters('serviceName'),'str')]",
     "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
     "hubName": "vacancy",
     "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]",
@@ -202,7 +188,7 @@
       "apiVersion": "2020-06-01",
       "name": "sql-database",
       "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedResourceGroupName')]",
+      "resourceGroup": "[parameters('SharedEnvResourceGroup')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -241,7 +227,7 @@
       "apiVersion": "2020-06-01",
       "name": "event-hub",
       "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedResourceGroupName')]",
+      "resourceGroup": "[parameters('SharedEnvResourceGroup')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -275,12 +261,6 @@
         "parameters": {
           "appServicePlanName": {
             "value": "[variables('appServicePlanName')]"
-          },
-          "aseHostingEnvironmentName": {
-            "value": "[parameters('aseHostingEnvironmentName')]"
-          },
-          "aseResourceGroup": {
-            "value": "[parameters('aseResourceGroup')]"
           },
           "aspSize": {
             "value": "[parameters('aspSize')]"
@@ -382,7 +362,7 @@
                 },
                 {
                   "name": "FUNCTIONS_ENVIRONMENT",
-                  "value": "[toUpper(parameters('environmentFullName'))]"
+                  "value": "[toUpper(parameters('environmentName'))]"
                 }
               ]
             }
@@ -484,7 +464,7 @@
                 },
                 {
                   "name": "ASPNETCORE_ENVIRONMENT",
-                  "value": "[toUpper(parameters('environmentFullName'))]"
+                  "value": "[toUpper(parameters('environmentName'))]"
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
