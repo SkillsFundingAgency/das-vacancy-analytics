@@ -1,17 +1,17 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "resourceEnvironmentName": {
+        "environmentName": {
             "type": "string"
         },
-        "environmentFullName": {
+        "resourceEnvironmentName": {
             "type": "string"
         },
         "serviceName": {
             "type": "string"
         },
-        "sharedResourceGroupName": {
+        "sharedEnvResourceGroup": {
             "type": "string"
         },
         "sharedSqlServerName": {
@@ -42,14 +42,6 @@
         },
         "eventHubPartitionCount": {
             "type": "int"
-        },
-        "aseHostingEnvironmentName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "aseResourceGroup": {
-            "type": "string",
-            "defaultValue": ""
         },
         "databaseConnectionString": {
             "type": "securestring"
@@ -100,6 +92,24 @@
         "functionsExtensionVersion": {
             "type": "string",
             "defaultValue": "~3"
+        },
+        "tags": {
+            "type": "object"
+        },
+        "resourceGroupLocation": {
+            "type": "string"
+        },
+        "sharedEnvVirtualNetworkName": {
+            "type": "string"
+        },
+        "subnetObject": {
+            "type": "object"
+        },
+        "subnetServiceEndpointList": {
+            "type": "array"
+        },
+        "subnetDelegations": {
+            "type": "array"
         }
     },
     "variables": {
@@ -110,14 +120,54 @@
         "storageAccountName": "[concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'),'str')]",
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "hubName": "vacancy",
-        "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]"
+        "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'),'-rg')]"
     },
     "resources": [
         {
+            "apiVersion": "2020-06-01",
+            "type": "Microsoft.Resources/resourceGroups",
+            "name": "[variables('resourceGroupName')]",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "worker-app-service-subnet",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('sharedEnvVirtualNetworkName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetObject').name]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[parameters('subnetObject').addressSpace]"
+                    },
+                    "serviceEndpointList": {
+                        "value": "[parameters('subnetServiceEndpointList')]"
+                    },
+                    "delegations": {
+                        "value": "[parameters('subnetDelegations')]"
+                    }
+                }
+            }
+        },
+        {
             "condition": "[greater(length(parameters('customHostName')), 0)]",
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "app-service-certificate",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -138,10 +188,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "sql-database",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedResourceGroupName')]",
+            "resourceGroup": "[parameters('SharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -177,10 +227,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "event-hub",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedResourceGroupName')]",
+            "resourceGroup": "[parameters('SharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -201,9 +251,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "app-service-plan",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -213,12 +264,6 @@
                 "parameters": {
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
@@ -230,9 +275,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "storage-account",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -247,9 +293,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "function-app-insights",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -267,9 +314,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "function-app",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -284,7 +332,10 @@
                         "value": "[variables('appServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference('worker-app-service-subnet').outputs.subnetResourceId.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[concat(parameters('wafOutboundIpAddresses'), parameters('dfeOutboundIpAddresses'))]"
@@ -314,7 +365,7 @@
                                 },
                                 {
                                     "name": "FUNCTIONS_ENVIRONMENT",
-                                    "value": "[toUpper(parameters('environmentFullName'))]"
+                                    "value": "[toUpper(parameters('environmentName'))]"
                                 }
                             ]
                         }
@@ -347,12 +398,18 @@
                         "value": "[if(greater(length(parameters('customHostname')), 0), reference('app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "app-service-plan",
+                "storage-account",
+                "worker-app-service-subnet"
+            ]
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "worker-app-insights",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -370,9 +427,10 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "worker-app-service",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -387,7 +445,10 @@
                         "value": "[variables('appServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference('worker-app-service-subnet').outputs.subnetResourceId.value]"
                     },
                     "deployStagingSlot": {
                         "value": false
@@ -409,7 +470,7 @@
                                 },
                                 {
                                     "name": "ASPNETCORE_ENVIRONMENT",
-                                    "value": "[toUpper(parameters('environmentFullName'))]"
+                                    "value": "[toUpper(parameters('environmentName'))]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -464,7 +525,8 @@
             },
             "dependsOn": [
                 "app-service-plan",
-                "storage-account"
+                "storage-account",
+                "worker-app-service-subnet"
             ]
         }
     ],
@@ -480,6 +542,10 @@
         "FunctionAppName": {
             "type": "string",
             "value": "[variables('functionAppName')]"
+        },
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('resourceGroupName')]"
         }
     }
 }
