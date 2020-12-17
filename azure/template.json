@@ -5,6 +5,9 @@
         "environmentName": {
             "type": "string"
         },
+        "resourceEnvironmentName": {
+            "type": "string"
+        },
         "serviceName": {
             "type": "string"
         },
@@ -111,10 +114,10 @@
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-        "resourceNamePrefix": "[toLower(concat('das-', parameters('environmentName'),'-', parameters('serviceName')))]",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]",
-        "storageAccountName": "[concat('das', parameters('environmentName'), parameters('serviceName'),'str')]",
+        "storageAccountName": "[concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'),'str')]",
         "functionAppName": "[concat(variables('resourceNamePrefix'), '-fa')]",
         "hubName": "vacancy",
         "workerAppServiceName": "[concat(variables('ResourceNamePrefix'), 'wkr-as')]",
