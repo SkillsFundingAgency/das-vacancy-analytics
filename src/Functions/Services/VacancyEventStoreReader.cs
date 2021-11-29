@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Logging;
 using Polly;
 
@@ -12,10 +14,13 @@ namespace Esfa.VacancyAnalytics.Functions.Services
     {
         private readonly string _vacancyEventStoreConnString;
         private const string RecentlyAffectedVacanciesSproc = "[VACANCY].[Event_GET_RecentlyAffectedVacancies]";
+        private IHostingEnvironment _environment;
+        private const string AzureResource = "https://database.windows.net/";
 
-        public VacancyEventStoreReader(string vacancyEventStoreConnString, ILogger log) : base(log)
+        public VacancyEventStoreReader(string vacancyEventStoreConnString, ILogger log, IHostingEnvironment environment) : base(log)
         {
             _vacancyEventStoreConnString = vacancyEventStoreConnString;
+            _environment = environment;
         }
 
         public async Task<IEnumerable<long>> GetRecentlyAffectedVacanciesAsync(int lastNoOfHours)
@@ -24,6 +29,13 @@ namespace Esfa.VacancyAnalytics.Functions.Services
 
             using (var conn = new SqlConnection(_vacancyEventStoreConnString))
             {
+
+                if (!_environment.IsDevelopment())
+                {
+                    AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    conn.AccessToken = await azureServiceTokenProvider.GetAccessTokenAsync(AzureResource);
+                }
+
                 await conn.OpenAsync();
 
                 using (var command = conn.CreateCommand())

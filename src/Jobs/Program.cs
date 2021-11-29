@@ -40,7 +40,7 @@ namespace Esfa.VacancyAnalytics.Jobs
             var vacancyEventHubConnString = config.GetConnectionString(VacancyEventHubConnStringKey);
             var queueStorageConnString = config.GetConnectionString(QueueStorageConnStringKey);
 
-            var eventStoreWriter = new VacancyEventStoreWriter(vacancyEventStoreConnString, loggerFactory.CreateLogger<VacancyEventStoreWriter>());
+            var eventStoreWriter = new VacancyEventStoreWriter(vacancyEventStoreConnString, loggerFactory.CreateLogger<VacancyEventStoreWriter>(), IsDevelopment);
 
             var factory = new EventProcessorFactory(loggerFactory.CreateLogger<VacancyEventProcessor>(), eventStoreWriter);
 
