@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Esfa.VacancyAnalytics.Functions.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -14,11 +15,13 @@ namespace Esfa.VacancyAnalytics.Functions
         private const string QueueStorageConnStringKey = "QueueStorage";
         private readonly ILogger<EnqueueVacancyAnalyticsSummaryGenerator> _log;
         private readonly IConfiguration _config;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public EnqueueVacancyAnalyticsSummaryGenerator(ILogger<EnqueueVacancyAnalyticsSummaryGenerator> log, IConfiguration config)
+        public EnqueueVacancyAnalyticsSummaryGenerator(ILogger<EnqueueVacancyAnalyticsSummaryGenerator> log, IConfiguration config, IHostingEnvironment hostingEnvironment)
         {
             _log = log;
             _config = config;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [FunctionName("EnqueueVacancyAnalyticsSummaryGenerator")]
@@ -26,7 +29,7 @@ namespace Esfa.VacancyAnalytics.Functions
         {
             log.LogInformation($"C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function executed at: {DateTime.UtcNow}");
 
-            var reader = new VacancyEventStoreReader(_config.GetConnectionString(VacancyEventStoreConnStringKey), log);
+            var reader = new VacancyEventStoreReader(_config.GetConnectionString(VacancyEventStoreConnStringKey), log, _hostingEnvironment);
 
             var queue = new VacancyAnalyticsQueueStorageWriter(_config.GetConnectionString(QueueStorageConnStringKey));
 
