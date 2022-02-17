@@ -28,7 +28,7 @@ namespace Esfa.VacancyAnalytics.Functions
 
         [FunctionName("EnqueueVacancyAnalyticsSummaryGenerator")]
         public async Task Run([TimerTrigger("0 1 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context,
-            [Queue(GlobalConstants.GenerateVacancyAnalyticsQueueName), StorageAccount("QueueStorage")] ICollector<string> VacancyReferenceStorageQueue)
+            [Queue(GlobalConstants.GenerateVacancyAnalyticsQueueName), StorageAccount("QueueStorage")] IAsyncCollector<string> vacancyReferenceStorageQueue)
         {
             log.LogInformation($"C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function executed at: {DateTime.UtcNow}");
 
@@ -36,7 +36,9 @@ namespace Esfa.VacancyAnalytics.Functions
 
             var vacancyRefs = await reader.GetRecentlyAffectedVacanciesAsync(lastNoOfHours: 1);
 
-            vacancyRefs.ToList().ForEach(vacancyReference => VacancyReferenceStorageQueue.Add(JsonConvert.SerializeObject(new { VacancyReference = vacancyReference })));
+            var tasks = vacancyRefs.Select(vacancyReference => vacancyReferenceStorageQueue.AddAsync(JsonConvert.SerializeObject(new { VacancyReference = vacancyReference })));
+
+            await Task.WhenAll(tasks);
 
             log.LogInformation($"Finished C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function completed at: {DateTime.UtcNow}");
         }
