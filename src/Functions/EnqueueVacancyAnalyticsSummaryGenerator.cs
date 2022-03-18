@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Esfa.VacancyAnalytics.Functions.Models;
@@ -34,11 +35,26 @@ namespace Esfa.VacancyAnalytics.Functions
 
             var reader = new VacancyEventStoreReader(_config.GetConnectionString(VacancyEventStoreConnStringKey), log, _hostingEnvironment);
 
-            var vacancyRefs = await reader.GetRecentlyAffectedVacanciesAsync(lastNoOfHours: 1);
+            var vacancyRefs = (await reader.GetRecentlyAffectedVacanciesAsync(lastNoOfHours: 1)).ToList();
 
-            var tasks = vacancyRefs.Select(vacancyReference => vacancyReferenceStorageQueue.AddAsync(JsonConvert.SerializeObject(new { VacancyReference = vacancyReference })));
+            var enqueueTasks = new List<Task>();
+            var sendCounter = 0;
+            foreach (var vacancyRef in vacancyRefs)
+            {
+                enqueueTasks.Add(vacancyReferenceStorageQueue.AddAsync(JsonConvert.SerializeObject(new { VacancyReference = vacancyRef }));
+                sendCounter++;
 
-            await Task.WhenAll(tasks);
+                if (sendCounter % 1000 == 0)
+                {
+                    await Task.WhenAll(enqueueTasks);
+                    log.LogInformation($"Queued {sendCounter} of {vacancyRefs.Count} messages.");
+                    enqueueTasks.Clear();
+                    await Task.Delay(250);
+                }
+            }
+
+            // await final tasks not % 1000
+            await Task.WhenAll(enqueueTasks);
 
             log.LogInformation($"Finished C# Timer trigger {nameof(EnqueueVacancyAnalyticsSummaryGenerator)} function completed at: {DateTime.UtcNow}");
         }
