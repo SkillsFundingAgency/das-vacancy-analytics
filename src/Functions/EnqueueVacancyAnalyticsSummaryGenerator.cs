@@ -41,7 +41,7 @@ namespace Esfa.VacancyAnalytics.Functions
             var sendCounter = 0;
             foreach (var vacancyRef in vacancyRefs)
             {
-                enqueueTasks.Add(vacancyReferenceStorageQueue.AddAsync(JsonConvert.SerializeObject(new { VacancyReference = vacancyRef }));
+                enqueueTasks.Add(vacancyReferenceStorageQueue.AddAsync(JsonConvert.SerializeObject(new { VacancyReference = vacancyRef })));
                 sendCounter++;
 
                 if (sendCounter % 1000 == 0)
