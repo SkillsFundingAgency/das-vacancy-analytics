@@ -110,6 +110,9 @@
         },
         "subnetDelegations": {
             "type": "array"
+        },
+        "workerAccessRestrictions": {
+            "type": "array"
         }
     },
     "variables": {
@@ -478,6 +481,9 @@
                     },
                     "deployStagingSlot": {
                         "value": false
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
