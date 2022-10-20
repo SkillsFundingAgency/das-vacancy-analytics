@@ -113,6 +113,10 @@
         },
         "workerAccessRestrictions": {
             "type": "array"
+        },
+        "utcValue": {
+            "type": "string",
+            "defaultValue": "[utcNow('yyMMddHHmmss')]"
         }
     },
     "variables": {
@@ -138,7 +142,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
-            "name": "vacancy-analytics-subnet",
+            "name": "[concat(parameters('subnetObject').name, '-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
@@ -167,7 +171,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "vacancy-analytics-sql-firewall-rule",
+            "name": "[concat(parameters('subnetObject').name, '-sql-firewall-rule-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -181,7 +185,7 @@
                         "value": "[parameters('sharedSQLServerName')]"
                     },
                     "subnetResourceIdList": {
-                        "value": "[createArray(reference('vacancy-analytics-subnet').outputs.SubnetResourceId.value)]"
+                        "value": "[createArray(reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
                     }
                 }
             }
@@ -189,7 +193,7 @@
         {
             "condition": "[greater(length(parameters('customHostName')), 0)]",
             "apiVersion": "2020-06-01",
-            "name": "app-service-certificate",
+            "name": "[concat(variables('functionAppName'), '-certificate-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -213,7 +217,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "sql-database",
+            "name": "[concat(variables('databaseName'), '-sql-database-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('SharedEnvResourceGroup')]",
             "properties": {
@@ -252,7 +256,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "event-hub",
+            "name": "[concat(variables('hubName'), '-event-hub-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('SharedEnvResourceGroup')]",
             "properties": {
@@ -276,7 +280,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "app-service-plan",
+            "name": "[concat(variables('appServicePlanName'), '-app-service-plan-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -300,7 +304,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "storage-account",
+            "name": "[concat(variables('storageAccountName'), '-storage-account-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -321,7 +325,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "function-app-insights",
+            "name": "[concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -342,7 +346,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "function-app",
+            "name": "[concat(variables('functionAppName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -362,7 +366,7 @@
                         "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference('vacancy-analytics-subnet').outputs.subnetResourceId.value]"
+                        "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[concat(parameters('wafOutboundIpAddresses'), parameters('dfeOutboundIpAddresses'))]"
@@ -372,7 +376,7 @@
                             "array": [
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('functionAppName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -380,11 +384,11 @@
                                 },
                                 {
                                     "name": "AzureWebJobsStorage",
-                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                    "value": "[reference(concat(variables('storageAccountName'), '-storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
                                     "name": "VacancyEventHub",
-                                    "value": "[reference('event-hub').outputs.HubEndpoint.value]"
+                                    "value": "[reference(concat(variables('hubName'), '-event-hub-', parameters('utcValue'))).outputs.HubEndpoint.value]"
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -426,17 +430,17 @@
                         "value": "[parameters('customHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('customHostname')), 0), reference('app-service-certificate', '2018-11-01').outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('customHostname')), 0), reference(concat(variables('functionAppName'), '-certificate-', parameters('utcValue')), '2018-11-01').outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
             "dependsOn": [
-                "app-service-plan"
+                "[concat(variables('appServicePlanName'), '-app-service-plan-', parameters('utcValue'))]"
             ]
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "worker-app-insights",
+            "name": "[concat(variables('workerAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -457,7 +461,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "worker-app-service",
+            "name": "[concat(variables('workerAppServiceName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -477,7 +481,7 @@
                         "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference('vacancy-analytics-subnet').outputs.subnetResourceId.value]"
+                        "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
                     },
                     "deployStagingSlot": {
                         "value": false
@@ -506,7 +510,7 @@
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference('worker-app-insights').outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('workerAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 }
                             ]
                         }
@@ -516,7 +520,7 @@
                             "array": [
                                 {
                                     "name": "AzureWebJobsStorage",
-                                    "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
+                                    "connectionString": "[reference(concat(variables('storageAccountName'), '-storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]",
                                     "type": "Custom"
                                 },
                                 {
@@ -531,7 +535,7 @@
                                 },
                                 {
                                     "name": "VacancyEventHub",
-                                    "connectionString": "[reference('event-hub').outputs.HubEndpointReadOnly.value]",
+                                    "connectionString": "[reference(concat(variables('hubName'), '-event-hub-', parameters('utcValue'))).outputs.HubEndpointReadOnly.value]",
                                     "type": "Custom"
                                 },
                                 {
@@ -556,7 +560,7 @@
                 }
             },
             "dependsOn": [
-                "app-service-plan"
+                "[concat(variables('appServicePlanName'), '-app-service-plan-', parameters('utcValue'))]"
             ]
         }
     ],
