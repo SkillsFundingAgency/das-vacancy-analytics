@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Esfa.Vacancy.Analytics;
 using Esfa.Vacancy.Analytics.Events;
+using Esfa.VacancyAnalytics.Functions.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -38,7 +39,7 @@ namespace Esfa.VacancyAnalytics.Functions
                     requestBody = await sr.ReadToEndAsync();
                 }
 
-                var evt = JsonConvert.DeserializeObject<Models.VacancyEvent>(requestBody);
+                var evt = JsonConvert.DeserializeObject<VacancyEventRequest>(requestBody);
 
                 await SendVacancyEvent(evt);
             }
@@ -55,7 +56,7 @@ namespace Esfa.VacancyAnalytics.Functions
             return new OkResult();
         }
 
-        private Task SendVacancyEvent(Esfa.VacancyAnalytics.Functions.Models.VacancyEvent evt)
+        private Task SendVacancyEvent(VacancyEventRequest evt)
         {
             switch (evt.EventType)
             {

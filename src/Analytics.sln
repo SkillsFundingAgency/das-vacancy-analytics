@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esfa.VacancyAnalytics.Jobs"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esfa.VacancyAnalytics.Functions", "Functions\Esfa.VacancyAnalytics.Functions.csproj", "{83D1759E-D4F8-4709-933D-52208BE844D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{A5EA239F-87E0-428D-90B9-D7F12B9FE6D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{83D1759E-D4F8-4709-933D-52208BE844D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83D1759E-D4F8-4709-933D-52208BE844D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83D1759E-D4F8-4709-933D-52208BE844D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5EA239F-87E0-428D-90B9-D7F12B9FE6D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5EA239F-87E0-428D-90B9-D7F12B9FE6D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5EA239F-87E0-428D-90B9-D7F12B9FE6D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5EA239F-87E0-428D-90B9-D7F12B9FE6D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
